@@ -1,0 +1,28 @@
+{
+  "required" : [ "toAddress", "emailSubject", "emailBody" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "emailBody" : {
+      "title" : "Email Body",
+      "description" : "Plain text body of the email",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "emailSubject" : {
+      "title" : "Email Subject",
+      "description" : "Subject or topic of email",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "toAddress" : {
+      "title" : "To Address",
+      "description" : "Email address of recipient",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

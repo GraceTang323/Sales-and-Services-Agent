@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Helps sales representatives gather context about accounts, compose and send emails, and log sales activities.</description>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jak000003PetN</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>draft_and_send_email_16jak000003PetN</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>off_topic_16jak000003PetN</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>summarize_account_16jak000003PetN</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>agent_router_16jak000003PetN</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Greets the user and determine the appropriate subagent based on user input.</description>
+        <developerName>agent_router_16jak000003PetN</developerName>
+        <genAiPluginInstructions>
+            <description>You are a helpful assistant for sales and service teams at Salesforce. You provide Account summaries, draft and send emails, and log sales activities. 
+Right now your only available services are summarizing accounts and drafting and sending emails.</description>
+            <developerName>instruction0_179ak000005Ad6r</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000005Ad6r</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Main Handler</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>off_topic_16jak000003PetN</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant subagents when user request goes off-topic</description>
+        <developerName>off_topic_16jak000003PetN</developerName>
+        <genAiPluginInstructions>
+            <description>You are a helpful assistant for sales and service teams at Salesforce. You provide Account summaries, draft and send emails, and log sales activities. 
+Right now your only available services are summarizing accounts and drafting and sending emails.</description>
+            <developerName>instruction0_179ak000005Ad6s</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000005Ad6s</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>off_topic</localDeveloperName>
+        <masterLabel>Off Topic</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>summarize_account_16jak000003PetN</fullName>
+        <canEscalate>false</canEscalate>
+        <description>This agent handles account summary requests by retrieving the associated account information, and providing the user with a concise debrief.</description>
+        <developerName>summarize_account_16jak000003PetN</developerName>
+        <genAiPluginInstructions>
+            <description>You are a helpful assistant for sales and service teams at Salesforce. You provide Account summaries, draft and send emails, and log sales activities. 
+Right now your only available services are summarizing accounts and drafting and sending emails.</description>
+            <developerName>instruction0_179ak000005Ad6t</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000005Ad6t</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>fetch_account_data_179ak000005Ad6t</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>generate_brief_179ak000005Ad6t</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>generate_brief_179ak000005Ad6t</fullName>
+            <description>Generate a 2-paragraph account brief using the Account Brief Prompt Template</description>
+            <developerName>generate_brief_179ak000005Ad6t</developerName>
+            <invocationTarget>Account_Brief_Template</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>generate_brief</localDeveloperName>
+            <masterLabel>Generate Brief</masterLabel>
+            <progressIndicatorMessage>Looking at account information...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>fetch_account_data_179ak000005Ad6t</fullName>
+            <description>Fetch Account, Contacts, Opportunities, and Cases for a given account name or ID</description>
+            <developerName>fetch_account_data_179ak000005Ad6t</developerName>
+            <invocationTarget>AccountInfoFetcher</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>fetch_account_data</localDeveloperName>
+            <masterLabel>Fetch Account Data</masterLabel>
+        </localActions>
+        <localDeveloperName>summarize_account</localDeveloperName>
+        <masterLabel>Summarize Account</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>draft_and_send_email_16jak000003PetN</fullName>
+        <canEscalate>false</canEscalate>
+        <description>This agent handles sending email requests by drafting a professional email derived from information given by the user, and sending the email to the target addresses.</description>
+        <developerName>draft_and_send_email_16jak000003PetN</developerName>
+        <genAiPluginInstructions>
+            <description>You are a helpful assistant for sales and service teams at Salesforce. You provide Account summaries, draft and send emails, and log sales activities. 
+Right now your only available services are summarizing accounts and drafting and sending emails.</description>
+            <developerName>instruction0_179ak000005Ad6u</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000005Ad6u</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>parse_generated_draft_179ak000005Ad6u</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>send_email_179ak000005Ad6u</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>generate_email_draft_179ak000005Ad6u</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>send_email_179ak000005Ad6u</fullName>
+            <description>Sends the confirmed email to the recipient</description>
+            <developerName>send_email_179ak000005Ad6u</developerName>
+            <invocationTarget>EmailSender</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>send_email</localDeveloperName>
+            <masterLabel>Send Email</masterLabel>
+            <progressIndicatorMessage>Sending email...</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>parse_generated_draft_179ak000005Ad6u</fullName>
+            <description>Given a raw plain text draft, parses the recipient address, subject, and main body</description>
+            <developerName>parse_generated_draft_179ak000005Ad6u</developerName>
+            <invocationTarget>EmailDraftParser</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>parse_generated_draft</localDeveloperName>
+            <masterLabel>Parse Generated Draft</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>generate_email_draft_179ak000005Ad6u</fullName>
+            <description>Given a target recipient, subject, and key points, generates a brief 2 to 4 sentence email draft</description>
+            <developerName>generate_email_draft_179ak000005Ad6u</developerName>
+            <invocationTarget>Email_Draft_Template</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>generate_email_draft</localDeveloperName>
+            <masterLabel>Generate Email Draft</masterLabel>
+            <progressIndicatorMessage>Drafting email...</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>draft_and_send_email</localDeveloperName>
+        <masterLabel>Draft and send email</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Sales and Services Agent</masterLabel>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

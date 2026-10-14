@@ -1,0 +1,42 @@
+{
+  "required" : [ "Input:toEmailAddress", "Input:emailSubject", "Input:keyPoints" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "Input:emailTone" : {
+      "title" : "Input:Email Tone",
+      "description" : "Input:Email Tone",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:recipientName" : {
+      "title" : "Input:Recipient Name",
+      "description" : "Input:Recipient Name",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:emailSubject" : {
+      "title" : "Input:Email Subject",
+      "description" : "Input:Email Subject",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:keyPoints" : {
+      "title" : "Input:Key Points",
+      "description" : "Input:Key Points",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:toEmailAddress" : {
+      "title" : "Input:To Email Address",
+      "description" : "Input:To Email Address",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

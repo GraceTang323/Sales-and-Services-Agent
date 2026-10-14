@@ -1,7 +1,7 @@
 system:
     instructions: |
         You are a helpful assistant for sales and service teams at Salesforce. You provide Account summaries, draft and send emails, and log sales activities. 
-        Right now your only available service is summarizing accounts.
+        Right now your only available services are summarizing accounts and drafting and sending emails.
     messages:
         welcome: "Hello! I'm your Sales and Service assistant. What can I help with today?"
         error: "Sorry, something went wrong while retrieving account information. Please try again."
@@ -13,7 +13,8 @@ config:
     agent_type: "AgentforceEmployeeAgent"
 
 variables:
-    # Prompt template passthrough variables
+    # --------- Summarize Account Variables ---------
+    # Prompt template passthrough
     pt_account_details: mutable string = ""
     pt_contacts: mutable string = ""
     pt_opportunities: mutable string = ""
@@ -25,6 +26,22 @@ variables:
     is_high_value_account: mutable boolean = False
     error_message: mutable string = ""
 
+    # --------- Send Email Variables ---------
+
+    # Generated fields
+    to_email_address: mutable string = ""
+    email_subject: mutable string = ""
+    recipient_name: mutable string = ""
+    email_key_points: mutable string = ""
+    email_tone: mutable string = ""
+    email_body: mutable string = ""
+
+    email_stage: mutable string = "idle"
+    draft_status: mutable string = "idle"
+    email_confirmed: mutable boolean = False
+    email_sent: mutable boolean = False
+    email_error_message: mutable string = ""
+
 language:
     default_locale: "en_US"
     additional_locales: ""
@@ -35,8 +52,19 @@ start_agent agent_router:
     description: "Greets the user and determine the appropriate subagent based on user input."
 
     reasoning:
+        instructions: ->
+            | Keep greetings and questions about the assistant's supported capabilities brief but respectful.
+              NEVER blindly handle tasks to summarize Account data OR generate an email draft. You MUST transition to their respective subagents to handle these tasks.
+              Requests to retrieve, explain, or summarize Salesforce Account information must transition to {!@actions.go_to_summarize_account_information}.
+              Requests to draft, revise, or send an email must transition to {!@actions.go_to_draft_and_send_email}.
+              Other requests must transition to {!@actions.go_to_off_topic}.
+
+            if @variables.email_stage != "idle":
+                transition to @subagent.draft_and_send_email
+
         actions:
             go_to_summarize_account_information: @utils.transition to @subagent.summarize_account
+            go_to_draft_and_send_email: @utils.transition to @subagent.draft_and_send_email
             go_to_off_topic: @utils.transition to @subagent.off_topic
 
 subagent summarize_account:
@@ -134,7 +162,135 @@ subagent summarize_account:
                 promptResponse: string
                     filter_from_agent: False
                     is_displayable: True
-                    
+
+subagent draft_and_send_email:
+    label: "Draft and send email"
+    description: "This agent handles sending email requests by drafting a professional email derived from information given by the user, and sending the email to the target addresses."
+
+    reasoning:
+        instructions: ->
+            | Your job is to help the user send emails to their requested targets. Draft professional emails using only the factual information and intent explicitly provided by the user.
+              You may improve grammar, clarity, and tone, but do not invent facts, commitments, dates, or promises. Check for and refuse any unprofessional subjects or language. Preserve the recipient's email address exactly as supplied.
+              Do not send any email without the user's explicit confirmation of the final recipient, subject, and body.
+            
+            # Creating a new email:
+            if @variables.email_stage == "idle" or @variables.draft_status == "idle" and @variables.email_body == "":
+                set @variables.email_stage = "drafting"
+                | Ask the user for the recipient's email address, the email subject, key points to include, a recipient name if applicable, and the overall tone.
+                  Make it clear that the email address, subject, and at least one key point is required.
+                  If the user includes hateful or inappropriate language, DO NOT call any action. Explain that the email cannot include derogatory terms or subjects.
+                  When you have the required information, call the action {!@actions.set_email_parameters}.
+                
+            if @variables.email_stage == "drafting" and @variables.to_email_address != "" and @variables.email_subject != "" and @variables.email_key_points != "":
+                run @actions.generate_email_draft
+                    with "Input:emailSubject" = @variables.email_subject
+                    with "Input:recipientName" = @variables.recipient_name
+                    with "Input:emailTone" = @variables.email_tone
+                    with "Input:keyPoints" = @variables.email_key_points
+                    set @variables.email_body = @outputs.promptResponse
+                set @variables.email_confirmed = False
+                set @variables.email_stage = "drafted"
+                set @variables.draft_status = "awaiting review"
+
+                | Present {!@variables.email_body} exactly as given. Do not modify the body in any way.
+                  Confirm that {!@variables.to_email_address} and {!@variables.email_subject} are correct.
+                  Ask the user to explicitly confirm the draft, request changes to the draft, or cancel. Highlight that confirming will automatically send the email.
+            
+            # Reviewing email draft
+            if @variables.draft_status == "awaiting review" and @variables.email_confirmed == False and @variables.email_sent == False:
+                | If the user confirms, call the action {!@actions.confirm_draft} action.
+                  If the user requests changes, ask what to update, then call {!@actions.set_email_parameters} with the updated information.
+                  If the user cancels, ask what else they need help with.
+            
+            # Draft confirmed to send, send email:
+            if @variables.email_confirmed == True and @variables.draft_status == "confirmed":
+                run @actions.send_email
+                    with toAddress = @variables.to_email_address
+                    with emailSubject = @variables.email_subject
+                    with emailBody = @variables.email_body
+                    set @variables.email_sent = @outputs.emailSent
+                    set @variables.email_error_message = @outputs.emailError
+                set @variables.email_confirmed = False
+                set @variables.email_stage = "idle"
+                set @variables.draft_status = "idle"
+            
+            # Email sent successfully, reset state variables
+            if @variables.email_sent == True:
+                | Confirm the email was sent to {!@variables.to_email_address}. 
+                  Ask if there is anything else to help with.
+                set @variables.email_sent = False
+                set @variables.to_email_address = ""
+                set @variables.email_subject = ""
+                set @variables.email_body = ""
+                set @variables.recipient_name = ""
+                set @variables.email_tone = ""
+                set @variables.email_key_points = ""
+                set @variables.email_error_message = ""
+
+            # Error while sending email
+            if @variables.email_sent == False and @variables.email_error_message != "":
+                | The email could not be sent. Display the error message: {!@variables.email_error_message}. 
+                  Ask if the user would like to try again later.
+            
+        actions:
+            set_email_parameters: @utils.setVariables
+                with recipient_name = ...
+                with to_email_address = ...
+                with email_subject = ...
+                with email_key_points = ...
+                with email_tone = ...
+                description: "Updates email parameters according to the user's requested inputs"
+                set @variables.email_stage = "drafting"
+                
+            confirm_draft: @utils.setVariables
+                description: "Confirms the email draft as ready to be sent"
+                set @variables.email_confirmed = True
+                set @variables.draft_status = "confirmed"
+                available when @variables.email_stage == "drafted"
+            
+                
+    actions:
+        generate_email_draft:
+            description: "Given a target recipient, subject, and key points, generates a brief 2 to 4 sentence email draft"
+            target: "prompt://Email_Draft_Template"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Drafting email..."
+            inputs:
+                "Input:emailSubject": string
+                    is_required: True
+                "Input:recipientName": string
+                    is_required: False
+                "Input:emailTone": string
+                    is_required: False
+                "Input:keyPoints": string
+                    is_required: True
+            outputs:
+                promptResponse: string
+                    filter_from_agent: True
+
+        send_email:
+            description: "Sends the confirmed email to the recipient"
+            target: "apex://EmailSender"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Sending email..."
+            inputs:
+                toAddress: string
+                    is_required: True
+                    description: "Email address of recipient"
+                emailSubject: string
+                    is_required: True
+                    description: "Subject or topic of email"
+                emailBody: string
+                    is_required: True
+                    description: "Plain text body of the email"
+            outputs:
+                emailSent: boolean
+                    filter_from_agent: True
+                emailError: string
+                    filter_from_agent: True
+
+
+
 subagent off_topic:
     label: "Off Topic"
     description: "Redirect conversation to relevant subagents when user request goes off-topic"

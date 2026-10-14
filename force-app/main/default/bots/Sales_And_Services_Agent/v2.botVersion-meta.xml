@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>v2</fullName>
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Hello! I&apos;m your Sales and Service assistant. What can I help with today?</message>
+                <messageIdentifier>2ab9922d-f65d-4bf7-89dc-e02649391fbb</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>1694b67a-7564-4a9c-9203-2794961b4288</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>da31069f-2a73-4470-92e3-f64ec0ea8193</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Welcome</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Welcome</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Sorry, something went wrong while retrieving account information. Please try again.</message>
+                <messageIdentifier>a914e88a-71cd-464b-95a1-f7a7961dc395</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>1658e329-242a-4272-94d4-dc62c52c220b</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>fd9c0835-8c1e-4a6a-895d-155c98d41e85</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Rich_Content_Error_Handling</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Error Handler</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <developerName>Transfer_To_Agent</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Transfer To Agent</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <citationsEnabled>false</citationsEnabled>
+    <conversationDefinitionPlanners>
+        <genAiPlannerName>Sales_And_Services_Agent_v2</genAiPlannerName>
+    </conversationDefinitionPlanners>
+    <conversationSystemDialogs>
+        <dialog>Rich_Content_Error_Handling</dialog>
+        <type>ErrorHandling</type>
+    </conversationSystemDialogs>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The next topic to be visited</description>
+        <developerName>AgentScriptInternal_next_topic</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Next Topic</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Pt Account Details</description>
+        <developerName>pt_account_details</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Pt Account Details</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Error Message</description>
+        <developerName>error_message</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Error Message</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The agent instructions</description>
+        <developerName>AgentScriptInternal_agent_instructions</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Agent Instructions</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Account Brief</description>
+        <developerName>account_brief</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Account Brief</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Runtime condition evaluation for if statements</description>
+        <developerName>AgentScriptInternal_condition_1</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Runtime Condition 1</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Pt Opportunities</description>
+        <developerName>pt_opportunities</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Pt Opportunities</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Email Error Message</description>
+        <developerName>email_error_message</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Error Message</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Email Body</description>
+        <developerName>email_body</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Body</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>To Email Address</description>
+        <developerName>to_email_address</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>To Email Address</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Email Subject</description>
+        <developerName>email_subject</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Subject</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Email Sent</description>
+        <developerName>email_sent</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Sent</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Account Found</description>
+        <developerName>account_found</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Account Found</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Is High Value Account</description>
+        <developerName>is_high_value_account</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Is High Value Account</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Pt Contacts</description>
+        <developerName>pt_contacts</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Pt Contacts</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Email Confirmed</description>
+        <developerName>email_confirmed</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Confirmed</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Raw Email Draft</description>
+        <developerName>raw_email_draft</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Raw Email Draft</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Pt Cases</description>
+        <developerName>pt_cases</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Pt Cases</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <copilotPrimaryLanguage>en_US</copilotPrimaryLanguage>
+    <defaultStdObjForContactIdFltrEnabled>false</defaultStdObjForContactIdFltrEnabled>
+    <entryDialog>Welcome</entryDialog>
+    <intentDisambiguationEnabled>false</intentDisambiguationEnabled>
+    <intentV3Enabled>false</intentV3Enabled>
+    <isScriptCompatibleAgent>true</isScriptCompatibleAgent>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <staticPromptsEnabled>false</staticPromptsEnabled>
+    <stopRecPrompts>false</stopRecPrompts>
+    <stopWelcomePrompts>false</stopWelcomePrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+</BotVersion>

@@ -1,0 +1,42 @@
+{
+  "required" : [ "Input:accountDetails", "Input:contactsSummary", "Input:opportunitiesSummary", "Input:casesSummary", "Input:isHighValue" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "Input:contactsSummary" : {
+      "title" : "Input:Contacts Summary",
+      "description" : "Input:Contacts Summary",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:accountDetails" : {
+      "title" : "Input:Account Details",
+      "description" : "Input:Account Details",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:opportunitiesSummary" : {
+      "title" : "Input:Opportunities Summary",
+      "description" : "Input:Opportunities Summary",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:casesSummary" : {
+      "title" : "Input:Cases Summary",
+      "description" : "Input:Cases Summary",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:isHighValue" : {
+      "title" : "Input:Is High Value",
+      "description" : "Input:Is High Value",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
