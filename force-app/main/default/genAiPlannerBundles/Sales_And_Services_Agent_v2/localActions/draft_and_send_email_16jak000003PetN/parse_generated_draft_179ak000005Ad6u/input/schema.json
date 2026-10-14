@@ -1,0 +1,14 @@
+{
+  "required" : [ "draftText" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "draftText" : {
+      "title" : "Draft Text",
+      "description" : "The raw generated draft of the email",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,14 @@
+{
+  "required" : [ "accountIdentifier" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "accountIdentifier" : {
+      "title" : "Account Identifier",
+      "description" : "Account name or Salesforce ID",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
