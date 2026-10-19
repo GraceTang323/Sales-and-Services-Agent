@@ -41,6 +41,7 @@ variables:
     email_confirmed: mutable boolean = False
     email_sent: mutable boolean = False
     email_error_message: mutable string = ""
+    email_cancelled: mutable boolean = False
 
 language:
     default_locale: "en_US"
@@ -170,16 +171,20 @@ subagent draft_and_send_email:
     reasoning:
         instructions: ->
             | Your job is to help the user send emails to their requested targets. Draft professional emails using only the factual information and intent explicitly provided by the user.
+              If the user wants to summarize an account or anything non-email related, explain that they must first cancel or send their email before doing so.
               You may improve grammar, clarity, and tone, but do not invent facts, commitments, dates, or promises. Check for and refuse any unprofessional subjects or language. Preserve the recipient's email address exactly as supplied.
               Do not send any email without the user's explicit confirmation of the final recipient, subject, and body.
             
             # Creating a new email:
-            if @variables.email_stage == "idle" or @variables.draft_status == "idle" and @variables.email_body == "":
+            if @variables.email_stage == "idle" and @variables.email_sent == False and @variables.email_cancelled == False:
                 set @variables.email_stage = "drafting"
                 | Ask the user for the recipient's email address, the email subject, key points to include, a recipient name if applicable, and the overall tone.
                   Make it clear that the email address, subject, and at least one key point is required.
                   If the user includes hateful or inappropriate language, DO NOT call any action. Explain that the email cannot include derogatory terms or subjects.
                   When you have the required information, call the action {!@actions.set_email_parameters}.
+
+            if @variables.email_stage == "drafting":
+                run @actions.set_email_parameters
                 
             if @variables.email_stage == "drafting" and @variables.to_email_address != "" and @variables.email_subject != "" and @variables.email_key_points != "":
                 run @actions.generate_email_draft
@@ -198,9 +203,9 @@ subagent draft_and_send_email:
             
             # Reviewing email draft
             if @variables.draft_status == "awaiting review" and @variables.email_confirmed == False and @variables.email_sent == False:
-                | If the user confirms, call the action {!@actions.confirm_draft} action.
+                | If the user EXPLICITLY says "confirm", call the action {!@actions.confirm_draft} action. Do not confirm otherwise.
                   If the user requests changes, ask what to update, then call {!@actions.set_email_parameters} with the updated information.
-                  If the user cancels, ask what else they need help with.
+                  If the user cancels, call {!@actions.reset_state_variables}, then ask what else they need help with.
             
             # Draft confirmed to send, send email:
             if @variables.email_confirmed == True and @variables.draft_status == "confirmed":
@@ -231,6 +236,7 @@ subagent draft_and_send_email:
             if @variables.email_sent == False and @variables.email_error_message != "":
                 | The email could not be sent. Display the error message: {!@variables.email_error_message}. 
                   Ask if the user would like to try again later.
+                set @variables.email_error_message = ""
             
         actions:
             set_email_parameters: @utils.setVariables
@@ -241,12 +247,26 @@ subagent draft_and_send_email:
                 with email_tone = ...
                 description: "Updates email parameters according to the user's requested inputs"
                 set @variables.email_stage = "drafting"
+                set @variables.draft_status = "idle"
+                available when @variables.email_confirmed == False
                 
             confirm_draft: @utils.setVariables
                 description: "Confirms the email draft as ready to be sent"
                 set @variables.email_confirmed = True
                 set @variables.draft_status = "confirmed"
                 available when @variables.email_stage == "drafted"
+
+            reset_state_variables: @utils.setVariables
+                with email_cancelled = True
+                with to_email_address = ""
+                with email_subject = ""
+                with email_key_points = ""
+                with email_body = ""
+                with recipient_name = ""
+                with email_tone = ""
+                with email_error_message = ""
+                with email_stage = "idle"
+                with draft_status = "idle"
             
                 
     actions:
