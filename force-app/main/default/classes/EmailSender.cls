@@ -14,33 +14,32 @@ public with sharing class EmailSender {
             return responses;
         }
 
-        for (SendRequest req: requests) {
-            SendResponse response = new SendResponse();
+        SendRequest req = requests[0];
+        SendResponse response = new SendResponse();
 
-            try {
-                if (req == null || String.isBlank(req.toAddress) || String.isBlank(req.emailSubject) || String.isBlank(req.emailBody)) {
-                    response.emailSent = false;
-                    response.emailError = 'Recipient, subject, and body are required.';
-                } else {
-                    EmailService.EmailRequest email = new EmailService.EmailRequest();
-                    email.toAddress = req.toAddress;
-                    email.subject = req.emailSubject;
-                    email.body = req.emailBody;
-
-                    Boolean result = EmailService.sendPlainTextEmail(new List<EmailService.EmailRequest>{ email });
-
-                    response.emailSent = result;
-                    response.emailError = result ? '' : 'Email was not sent';
-                }
-            } catch (Exception e) {
+        try {
+            if (req == null || String.isBlank(req.toAddress) || String.isBlank(req.emailSubject) || String.isBlank(req.emailBody)) {
                 response.emailSent = false;
-                response.emailError = 'Email sending failed: ' + e.getMessage();
-                System.debug(LoggingLevel.ERROR, 'EmailSender failed: ' + e.getMessage());
-            }
+                response.emailError = 'Recipient, subject, and body are required.';
+            } else { 
+                EmailService.EmailRequest email = new EmailService.EmailRequest();
+                email.toAddress = req.toAddress;
+                email.subject = req.emailSubject;
+                email.body = req.emailBody;
 
-            responses.add(response);
-            
+                Boolean result = EmailService.sendPlainTextEmail(new List<EmailService.EmailRequest>{ email });
+
+                response.emailSent = result;
+                response.emailError = result ? '' : 'Email was not sent';
+            }
+        } catch (Exception e) {
+            response.emailSent = false;
+            response.emailError = 'Email sending failed: ' + e.getMessage();
+            System.debug(LoggingLevel.ERROR, 'EmailSender failed: ' + e.getMessage());
         }
+
+        responses.add(response);
+
         return responses;
     }
 
