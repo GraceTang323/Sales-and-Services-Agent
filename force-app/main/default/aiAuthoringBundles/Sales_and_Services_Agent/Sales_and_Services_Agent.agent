@@ -100,6 +100,7 @@ subagent summarize_account:
                   {!@variables.account_brief}
                   If {!@variables.is_high_value_account} is True, highlight the account's
                   high-value status prominently at the top of your response.
+                  After presenting the brief, call the action {!@actions.reset_state_variables}.
                   Do NOT call any action again.
 
             if @variables.account_found == False and @variables.error_message != "":
@@ -118,6 +119,17 @@ subagent summarize_account:
                 set @variables.account_found = @outputs.accountFound
                 set @variables.error_message = @outputs.errorMessage
                 set @variables.is_high_value_account = @outputs.isHighValue
+
+            reset_state_variables: @utils.setVariables
+                with account_brief = ""
+                with account_found = False
+                with is_high_value_account = False
+                with error_message = ""
+                with pt_account_details = ""
+                with pt_contacts = ""
+                with pt_opportunities = ""
+                with pt_cases = ""
+
 
     actions:
         fetch_account_data:
@@ -176,15 +188,13 @@ subagent draft_and_send_email:
               Do not send any email without the user's explicit confirmation of the final recipient, subject, and body.
             
             # Creating a new email:
-            if @variables.email_stage == "idle" and @variables.email_sent == False and @variables.email_cancelled == False:
-                set @variables.email_stage = "drafting"
+            if @variables.email_stage == "idle" and @variables.email_sent == False:
+                # set @variables.email_stage = "drafting"
                 | Ask the user for the recipient's email address, the email subject, key points to include, a recipient name if applicable, and the overall tone.
                   Make it clear that the email address, subject, and at least one key point is required.
                   If the user includes hateful or inappropriate language, DO NOT call any action. Explain that the email cannot include derogatory terms or subjects.
+                  If the user explicitly wants to cancel, call the action {!@actions.cancel_draft}.
                   When you have the required information, call the action {!@actions.set_email_parameters}.
-
-            if @variables.email_stage == "drafting":
-                run @actions.set_email_parameters
                 
             if @variables.email_stage == "drafting" and @variables.to_email_address != "" and @variables.email_subject != "" and @variables.email_key_points != "":
                 run @actions.generate_email_draft
@@ -205,7 +215,7 @@ subagent draft_and_send_email:
             if @variables.draft_status == "awaiting review" and @variables.email_confirmed == False and @variables.email_sent == False:
                 | If the user EXPLICITLY says "confirm", call the action {!@actions.confirm_draft} action. Do not confirm otherwise.
                   If the user requests changes, ask what to update, then call {!@actions.set_email_parameters} with the updated information.
-                  If the user cancels, call {!@actions.reset_state_variables}, then ask what else they need help with.
+                  If the user cancels, call {!@actions.cancel_draft}, then ask what else they need help with.
             
             # Draft confirmed to send, send email:
             if @variables.email_confirmed == True and @variables.draft_status == "confirmed":
@@ -256,17 +266,18 @@ subagent draft_and_send_email:
                 set @variables.draft_status = "confirmed"
                 available when @variables.email_stage == "drafted"
 
-            reset_state_variables: @utils.setVariables
-                with email_cancelled = True
-                with to_email_address = ""
-                with email_subject = ""
-                with email_key_points = ""
-                with email_body = ""
-                with recipient_name = ""
-                with email_tone = ""
-                with email_error_message = ""
-                with email_stage = "idle"
-                with draft_status = "idle"
+            cancel_draft: @utils.setVariables
+                description: "Cancels the current email workflow"
+                set @variables.email_stage = "idle"
+                set @variables.draft_status = "idle"
+                set @variables.email_confirmed = False
+                set @variables.to_email_address = ""
+                set @variables.email_subject = ""
+                set @variables.email_body = ""
+                set @variables.recipient_name = ""
+                set @variables.email_tone = ""
+                set @variables.email_key_points = ""
+                available when @variables.email_stage != "idle"
             
                 
     actions:
